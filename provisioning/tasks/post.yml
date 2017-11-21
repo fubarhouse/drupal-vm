@@ -1,0 +1,37 @@
+---
+
+- name: Touch .bash_profile
+  file:
+    path: /home/vagrant/.bash_profile
+    owner: vagrant
+    group: vagrant
+    mode: 0777
+    state: touch
+
+- name: Ensure permissions of /usr/local
+  file:
+    path: /usr/local/
+    owner: vagrant
+    group: vagrant
+    mode: 0777
+    state: directory
+
+- name: Ensure permissions of /etc/nginx/sites-enabled/
+  file:
+    path: /etc/nginx/sites-enabled/
+    owner: vagrant
+    group: vagrant
+    mode: 0777
+    state: directory
+
+- name: Include fubarhouse.golang role
+  become: yes
+  become_user: vagrant
+  include_role:
+    name: fubarhouse.golang
+  when: '"golang" in installed_extras'
+
+- name: Run Drubuild init script
+  become: yes
+  become_user: vagrant
+  shell: /home/vagrant/go/bin/drubuild init
