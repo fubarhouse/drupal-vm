@@ -212,6 +212,7 @@ installed_extras:
   # - drupalconsole
   - drush
   # - elasticsearch
+  - golang
   # - java
   - mailhog
   # - memcached
@@ -253,6 +254,22 @@ firewall_allowed_tcp_ports:
 firewall_log_dropped_packets: false
 firewall_disable_firewalld: true
 firewall_disable_ufw: true
+
+# Post-provision tasks
+post_provision_tasks_dir: "./tasks/post.yml"
+
+# Go config
+go_version: 1.9.1
+go_install_clean: true
+GOROOT: /usr/local/go
+GOPATH: /home/vagrant/go
+go_reget: false
+go_install: []
+go_get:
+  - name: github.com/fubarhouse/drubuild
+    url: github.com/fubarhouse/drubuild
+shell_profiles:
+  - .bash_profile
 
 # PHP Configuration. Currently-supported versions: 5.6, 7.0, 7.1, 7.2.
 # See version-specific notes: http://docs.drupalvm.com/en/latest/configurations/php/
