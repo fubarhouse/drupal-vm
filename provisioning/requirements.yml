@@ -5,6 +5,8 @@
   version: 1.0.1
 - src: franklinkim.newrelic
   version: 1.6.0
+- src: fubarhouse.golang
+  version: 2.7.1
 - src: geerlingguy.adminer
   version: 1.2.0
 - src: geerlingguy.apache

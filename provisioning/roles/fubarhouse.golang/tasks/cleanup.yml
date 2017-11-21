@@ -1,0 +1,60 @@
+---
+
+- name: "Go-Lang | Removing GOROOT"
+  file:
+    path: "{{ GOROOT }}"
+    state: absent
+  failed_when: false
+
+- name: "Go-Lang | Removing GOPATH"
+  file:
+    path: "{{ GOPATH }}"
+    state: absent
+  failed_when: false
+
+- name: "Go-Lang | Removing GOBOOTSTRAP"
+  file:
+    path: "{{ GOROOT_BOOTSTRAP }}"
+    state: absent
+  when:
+   - GOROOT_BOOTSTRAP is defined
+   - install_go_bootstrap|bool == true
+  failed_when: false
+
+- name: "Go-Lang | Define shell exports"
+  set_fact:
+    shell_exports:
+      - regex: "export GOROOT"
+        lineinfile: "export GOROOT={{ GOROOT }}"
+      - regex: "export GOPATH"
+        lineinfile: "export GOPATH={{ GOPATH }}"
+      - regex: "PATH:{{ GOROOT }}/bin"
+        lineinfile: "export PATH=$PATH:{{ GOROOT }}/bin"
+      - regex: "PATH:{{ GOPATH }}/bin"
+        lineinfile: "export PATH=$PATH:{{ GOPATH }}/bin"
+  when: shell_exports is not defined
+
+- name: "Go-Lang | Detect configured shell profiles"
+  stat:
+    path: "{{ fubarhouse_user_dir }}/{{ item }}"
+  changed_when: false
+  failed_when: false
+  with_items: "{{ shell_profiles }}"
+  register: stat_shell_profiles
+  when:
+  - shell_profiles is defined
+  - stat_shell_profiles is not defined
+
+- name: "Go-Lang | Ensure shell profiles are clean"
+  lineinfile:
+    dest: "{{ item[0].stat.path }}"
+    regexp: "{{ item[1].regex }}"
+    line: "{{ item[1].lineinfile }}"
+    state: absent
+  with_nested:
+  - "{{ stat_shell_profiles.results }}"
+  - "{{ shell_exports }}"
+  when:
+  - shell_profiles is defined
+  - shell_exports is defined
+  - item[0].stat.exists|bool == true
