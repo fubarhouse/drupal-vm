@@ -30,8 +30,3 @@
   include_role:
     name: fubarhouse.golang
   when: '"golang" in installed_extras'
-
-- name: Run Drubuild init script
-  become: yes
-  become_user: vagrant
-  shell: /home/vagrant/go/bin/drubuild init
